@@ -38,7 +38,7 @@ public class PlayerController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
-        ps.Stop();
+        //ps.Stop();
     }
 
     // Update is called once per frame
@@ -51,11 +51,11 @@ public class PlayerController : MonoBehaviour
         dirX = Input.GetAxisRaw("Horizontal");
         Flip();
 
-        if(IsGrounded() && !Input.GetButtonDown("Jump"))
+        if(IsGrounded() && !GetJumpingInput())
         {
             doubleJump = true;
         }
-        if (Input.GetButtonDown("Jump"))
+        if (GetJumpingInput())
         {
             if (IsGrounded()) {
                 rb.velocity = new Vector2(rb.velocity.x, jumpingPower);
@@ -69,14 +69,14 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        animationupdate();
+        //animationupdate();
 
-        if (Input.GetButtonUp("Jump") && rb.velocity.y > 0f)
+        if (GetJumpingInput() && rb.velocity.y > 0f)
         {
             rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
         }
 
-        if (Input.GetKeyDown(KeyCode.E) && canDash)
+        if (Input.GetKeyDown(KeyCode.LeftShift) && canDash)
         {
             StartCoroutine(Dash());
         }
@@ -135,14 +135,19 @@ public class PlayerController : MonoBehaviour
         return Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
     }
 
+    private bool GetJumpingInput() 
+    {
+        return Input.GetButtonDown("Jump") || Input.GetKeyDown(KeyCode.W);
+    }
+
     private IEnumerator Dash()
     {
         canDash = false;
         isDashing = true;
         rb.velocity = new Vector2(transform.localScale.x * dashingPower, 0f);
-        tr.emitting = true;
+        //tr.emitting = true;
         yield return new WaitForSeconds(dashingTime);
-        tr.emitting = false;
+        //tr.emitting = false;
         isDashing = false;
         yield return new WaitForSeconds(dashingCooldown);
         canDash = true;
@@ -167,6 +172,7 @@ public class PlayerController : MonoBehaviour
 
     void createParticle()
     {
+        return;
         ps.Play();
     }
  }

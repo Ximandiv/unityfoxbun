@@ -11,21 +11,32 @@ public class PlayerController : MonoBehaviour
     public LayerMask groundLayer;
     public TrailRenderer tr;
     public ParticleSystem ps;
-    public static Action OnObjectPicked;
+
+    public CapsuleCollider2D Collider;
 
     private float dirX;
 
     private bool isFacingRight = true;
     private bool canDash = true;
-    private bool isDashing;
+    public bool isDashing;
+    public bool dashing = false;
     private bool doubleJump;
+    public bool crouchingPressed;
+    public bool isFull = false;
 
     public float dashingPower;
     public float movementSpeed;
     public float jumpingPower;
     public float twoJumpingPower;
+    public float crouchPercentOfHeight = 0.5f;
+    public bool isCrouching;
     private float dashingTime = 0.2f;
     private float dashingCooldown = 1f;
+    private Vector2 standColliderSize;
+    private Vector2 standColliderOffset;
+    private Vector2 crouchColliderSize;
+    private Vector2 crouchColliderOffset;
+    public static Action OnObjectDropped;
 
     private enum movementState
     {
@@ -38,7 +49,13 @@ public class PlayerController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
-        //ps.Stop();
+        ps.Stop();
+        Collider = GetComponent<CapsuleCollider2D>();
+        standColliderSize = Collider.size;
+        standColliderOffset = Collider.offset;
+
+        crouchColliderSize = new Vector2(standColliderSize.x, standColliderSize.y * crouchPercentOfHeight);
+        crouchColliderOffset = new Vector2(standColliderOffset.x, standColliderOffset.y * crouchPercentOfHeight);
     }
 
     // Update is called once per frame
@@ -51,11 +68,11 @@ public class PlayerController : MonoBehaviour
         dirX = Input.GetAxisRaw("Horizontal");
         Flip();
 
-        if(IsGrounded() && !GetJumpingInput())
+        if (IsGrounded() && !Input.GetButtonDown("Jump"))
         {
             doubleJump = true;
         }
-        if (GetJumpingInput())
+        if (Input.GetButtonDown("Jump"))
         {
             if (IsGrounded()) {
                 rb.velocity = new Vector2(rb.velocity.x, jumpingPower);
@@ -69,18 +86,63 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        //animationupdate();
+        //    animationupdate();
 
-        if (GetJumpingInput() && rb.velocity.y > 0f)
+        if (Input.GetButtonUp("Jump") && rb.velocity.y > 0f)
         {
             rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
         }
 
-        if (Input.GetKeyDown(KeyCode.LeftShift) && canDash)
+        if (Input.GetKeyDown(KeyCode.E) && canDash)
         {
             StartCoroutine(Dash());
         }
 
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            crouchingPressed = true;
+            Crouch();
+        }
+        if (Input.GetKeyUp(KeyCode.C))
+        {
+            crouchingPressed = false;
+            StandingUp();
+        }
+
+        if (isDashing)
+        {
+            dashing = true;
+        }
+        else
+        {
+            dashing = false;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            isFull = false;
+            OnObjectDropped();
+        }
+    }
+
+    private void Crouch()
+    {
+        if (crouchingPressed)
+        {
+            isCrouching = true;
+            Collider.size = crouchColliderSize;
+            Collider.offset = crouchColliderOffset;
+        }
+    }
+
+    private void StandingUp()
+    {
+        if (!crouchingPressed)
+        {
+            isCrouching = true;
+            Collider.size = standColliderSize;
+            Collider.offset = standColliderOffset;
+        }
     }
 
     //private void animationupdate()
@@ -117,12 +179,6 @@ public class PlayerController : MonoBehaviour
             return;
         }
         rb.velocity = new Vector2(dirX * movementSpeed, rb.velocity.y);
-
-        bool? goToRight = null;
-        if (dirX < 0) goToRight = true;
-        if (dirX > 0) goToRight = false;
-
-        ParalaxManager.DoParalax(goToRight);
     }
 
     private void Flip()
@@ -141,19 +197,14 @@ public class PlayerController : MonoBehaviour
         return Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
     }
 
-    private bool GetJumpingInput() 
-    {
-        return Input.GetButtonDown("Jump") || Input.GetKeyDown(KeyCode.W);
-    }
-
     private IEnumerator Dash()
     {
         canDash = false;
         isDashing = true;
         rb.velocity = new Vector2(transform.localScale.x * dashingPower, 0f);
-        //tr.emitting = true;
+        tr.emitting = true;
         yield return new WaitForSeconds(dashingTime);
-        //tr.emitting = false;
+        tr.emitting = false;
         isDashing = false;
         yield return new WaitForSeconds(dashingCooldown);
         canDash = true;
@@ -165,24 +216,18 @@ public class PlayerController : MonoBehaviour
         {
             Destroy(collider.gameObject);
         }
-        if(collider.tag == "Steal" && isDashing)
-        {
-            Destroy(collider.gameObject);
-        }
     }
 
     private void OnTriggerStay2D(Collider2D collision)
     {
         if (collision.tag == "Item" && Input.GetKeyDown(KeyCode.J))
         {
-            OnObjectPicked();
             Destroy(collision.gameObject);
         }
     }
 
     void createParticle()
     {
-        return;
         ps.Play();
     }
  }

@@ -83,32 +83,32 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    private void animationupdate()
-    {
-        movementState state;
-        if (dirX > 0f)
-        {
-            state = movementState.running;
-        }
-        else if (dirX < 0f)
-        {
-            state = movementState.running;
-            Flip();
-        }
-        else
-        {
-            state = movementState.idle;
-        }
-        if (rb.velocity.y > .1f)
-        {
-            state = movementState.jump;
-        }
-        else
-        {
-            state = movementState.idle;
-        }
-        anim.SetInteger("state", (int)state);
-    }
+    //private void animationupdate()
+    //{
+    //    movementState state;
+    //    if (dirX > 0f)
+    //    {
+    //        state = movementState.running;
+    //    }
+    //    else if (dirX < 0f)
+    //   {
+    //        state = movementState.running;
+    //        Flip();
+    //    }
+    //    else
+    //    {
+    //        state = movementState.idle;
+    //    }
+    //    if (rb.velocity.y > .1f)
+    //    {
+    //        state = movementState.jump;
+    //    }
+    //    else
+    //    {
+    //        state = movementState.idle;
+    //    }
+    //    anim.SetInteger("state", (int)state);
+    //}
 
     private void FixedUpdate()
     {
@@ -156,6 +156,10 @@ public class PlayerController : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collider)
     {
         if (collider.tag == "Enemy")
+        {
+            Destroy(collider.gameObject);
+        }
+        if(collider.tag == "Steal" && isDashing)
         {
             Destroy(collider.gameObject);
         }

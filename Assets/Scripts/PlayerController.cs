@@ -117,6 +117,12 @@ public class PlayerController : MonoBehaviour
             return;
         }
         rb.velocity = new Vector2(dirX * movementSpeed, rb.velocity.y);
+
+        bool? goToRight = null;
+        if (dirX < 0) goToRight = true;
+        if (dirX > 0) goToRight = false;
+
+        ParalaxManager.DoParalax(goToRight);
     }
 
     private void Flip()

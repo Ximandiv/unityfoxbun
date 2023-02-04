@@ -48,4 +48,13 @@ public class ParalaxManager : MonoBehaviour
             plane.position += (goToRight.Value ? Vector3.right : Vector3.left) * _frontOffset;
         }        
     }
+
+    public static IEnumerator Dashing(bool? goToRight) 
+    {
+        //while () 
+        {
+
+        }
+        yield return null;
+    }
 }

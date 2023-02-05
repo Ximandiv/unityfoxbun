@@ -38,6 +38,7 @@ public class DialogueScript : MonoBehaviour
     public void Start()
     {
         anim = GetComponent<Animator>();
+        
     }
     private void OnTriggerStay2D(Collider2D collider)
     {

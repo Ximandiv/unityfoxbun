@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private PlatformsPerRow[] tutorialRows;
     [SerializeField] private PlatformsPerRow[] firstLevelRows;
 
+    private bool canWin;
     private int currentAct;
     private int maxPlatformRow;
 
@@ -23,6 +24,8 @@ public class GameManager : MonoBehaviour
         maxPlatformRow = 0;
 
         rootbehavior.OnPlatform += CheckRows;
+        Bag.OnGotKey += () => canWin = true;
+        ObjectiveBunny.OnReachedObjective += VerifyWin;
     }
 
     private void Start()
@@ -38,12 +41,29 @@ public class GameManager : MonoBehaviour
             {
                 if (i > maxPlatformRow + 1)
                 {
-                    fox.Die();
-                    killBox.OnDelayedReset();
+                    Lose();
                 }
                 else maxPlatformRow++;
             }
         }
+    }
+
+    private void VerifyWin() 
+    {
+        if (canWin == true) 
+        {
+            //Ganó
+        }
+        else 
+        {
+            Lose();
+        }
+    }
+
+    private void Lose() 
+    {
+        FindObjectOfType<FoxGameplay>().Die();
+        FindObjectOfType<KillBox>().OnDelayedReset();
     }
 }
 

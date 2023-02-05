@@ -89,8 +89,9 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-            animationupdate();
+            //animationupdate();
 
+        /*
         if (Input.GetButtonUp("Jump") && rb.velocity.y > 0f)
         {
             rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
@@ -126,6 +127,7 @@ public class PlayerController : MonoBehaviour
             isFull = false;
             OnObjectDropped();
         }
+        */
     }
 
     private void Crouch()
@@ -222,6 +224,12 @@ public class PlayerController : MonoBehaviour
             return;
         }
         rb.velocity = new Vector2(dirX * movementSpeed, rb.velocity.y);
+
+        bool? goToRight = null;
+        if (dirX > 0) goToRight = false;
+        if (dirX < 0) goToRight = true;
+
+        ParalaxManager.DoParalax(goToRight);
     }
 
     private void Flip()

@@ -41,6 +41,7 @@ GameObject:
   - component: {fileID: 1155394684742726355}
   - component: {fileID: 1155394684742726354}
   - component: {fileID: 1155394684742726364}
+  - component: {fileID: 1874891992533701255}
   - component: {fileID: 1155394684742726365}
   - component: {fileID: 1155394684742726366}
   m_Layer: 10
@@ -139,12 +140,26 @@ MonoBehaviour:
   dashing: 0
   crouchingPressed: 0
   isFull: 0
+  shortDash: 0
   dashingPower: 20
   movementSpeed: 3
   jumpingPower: 40
   twoJumpingPower: 40
   crouchPercentOfHeight: 0.5
   isCrouching: 0
+--- !u!114 &1874891992533701255
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1155394684742726353}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3e4fc6f981f48c48af1542364f76dd7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spawnPivot: {fileID: 0}
 --- !u!50 &1155394684742726365
 Rigidbody2D:
   serializedVersion: 4

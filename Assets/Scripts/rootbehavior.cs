@@ -10,6 +10,7 @@ public class rootbehavior : MonoBehaviour
     public SpriteRenderer sprite;
 
     public static Action OnKilled;
+    public static Action<Transform> OnPlatform;
 
     private bool IsRootActive => sprite.enabled;
 
@@ -24,7 +25,7 @@ public class rootbehavior : MonoBehaviour
     }
     public void Update()
     {
-        animationupdate();
+        if(anim != null) animationupdate();
     }
     private void animationupdate()
     {
@@ -57,11 +58,17 @@ public class rootbehavior : MonoBehaviour
         {
             if (activationMode == RootActivationMode.immediately) Activate();
 
-            if (IsRootActive == true && 
-                collision.gameObject.GetComponent<PlayerController>().IsGrounded())
+            if (collision.gameObject.GetComponent<PlayerController>().IsGrounded() == true) 
             {
-                collision.gameObject.GetComponent<FoxGameplay>().Die();
-                OnKilled?.Invoke();
+                if (IsRootActive == true && activationMode != RootActivationMode.never)
+                {
+                    collision.gameObject.GetComponent<FoxGameplay>().Die();
+                    OnKilled?.Invoke();
+                }
+                else
+                {
+                    OnPlatform?.Invoke(transform);
+                }
             }
         }
     }

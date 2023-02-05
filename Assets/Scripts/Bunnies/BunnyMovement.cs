@@ -9,6 +9,7 @@ public class BunnyMovement : MonoBehaviour
     [SerializeField] private float jumpForceX;
 
     private bool isJumping;
+    private Animator animator;
     new private SpriteRenderer renderer;
     new private Rigidbody2D rigidbody;
 
@@ -16,6 +17,7 @@ public class BunnyMovement : MonoBehaviour
     {
         isJumping = true;
 
+        animator = GetComponent<Animator>();
         rigidbody = GetComponent<Rigidbody2D>();
         renderer = GetComponent<SpriteRenderer>();
     }
@@ -35,6 +37,8 @@ public class BunnyMovement : MonoBehaviour
         bool goToRight = UnityEngine.Random.Range(1, 3) % 2 == 0;
         renderer.flipX = !goToRight;
         rigidbody.AddForce(new Vector2(jumpForceX * (goToRight? 1 : -1), jumpForceY), ForceMode2D.Impulse);
+
+        if(jumpForceX != 0) animator.SetTrigger("Jump");
     }
 
     IEnumerator Jumping()

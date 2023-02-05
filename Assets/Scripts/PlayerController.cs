@@ -11,7 +11,6 @@ public class PlayerController : MonoBehaviour
     public LayerMask groundLayer;
     public TrailRenderer tr;
     public ParticleSystem ps;
-    public static Action OnObjectPicked;
 
     public CapsuleCollider2D Collider;
 
@@ -24,6 +23,7 @@ public class PlayerController : MonoBehaviour
     private bool doubleJump;
     public bool crouchingPressed;
     public bool isFull = false;
+    public bool shortDash;
 
     public float dashingPower;
     public float movementSpeed;
@@ -41,7 +41,7 @@ public class PlayerController : MonoBehaviour
 
     private enum movementState
     {
-        idle, running, jump, attack
+        idle, running, jump, dash, crouch, falling
     }
 
 
@@ -50,20 +50,19 @@ public class PlayerController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
-        //ps.Stop();
-
+        ps.Stop();
         Collider = GetComponent<CapsuleCollider2D>();
         standColliderSize = Collider.size;
         standColliderOffset = Collider.offset;
 
         crouchColliderSize = new Vector2(standColliderSize.x, standColliderSize.y * crouchPercentOfHeight);
         crouchColliderOffset = new Vector2(standColliderOffset.x, standColliderOffset.y * crouchPercentOfHeight);
-
     }
 
     // Update is called once per frame
     void Update()
     {
+        IsGrounded();
         if (isDashing)
         {
             return;
@@ -71,14 +70,14 @@ public class PlayerController : MonoBehaviour
         dirX = Input.GetAxisRaw("Horizontal");
         Flip();
 
-        if (IsGrounded() && !GetJumpingInput())
+        if (IsGrounded() && !Input.GetButtonDown("Jump"))
         {
             doubleJump = true;
         }
-        if (GetJumpingInput())
+        
+        if (Input.GetButtonDown("Jump"))
         {
-            if (IsGrounded())
-            {
+            if (IsGrounded()) {
                 rb.velocity = new Vector2(rb.velocity.x, jumpingPower);
                 createParticle();
             }
@@ -90,26 +89,27 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        //animationupdate();
+            animationupdate();
 
-        if (GetJumpingInput() && rb.velocity.y > 0f)
+        if (Input.GetButtonUp("Jump") && rb.velocity.y > 0f)
         {
             rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
         }
 
-        if (Input.GetKeyDown(KeyCode.LeftShift) && canDash)
+        if (Input.GetKeyDown(KeyCode.E) && canDash)
         {
-            //StartCoroutine(Dash());
+            StartCoroutine(Dash());
         }
+
         if (Input.GetKeyDown(KeyCode.C))
         {
             crouchingPressed = true;
-            //Crouch();
+            Crouch();
         }
         if (Input.GetKeyUp(KeyCode.C))
         {
             crouchingPressed = false;
-            //StandingUp();
+            StandingUp();
         }
 
         if (isDashing)
@@ -133,7 +133,6 @@ public class PlayerController : MonoBehaviour
         if (crouchingPressed)
         {
             isCrouching = true;
-            canDash = false;
             Collider.size = crouchColliderSize;
             Collider.offset = crouchColliderOffset;
         }
@@ -143,39 +142,78 @@ public class PlayerController : MonoBehaviour
     {
         if (!crouchingPressed)
         {
-            isCrouching = true;
-            canDash = true;
+            isCrouching = false;
             Collider.size = standColliderSize;
             Collider.offset = standColliderOffset;
         }
     }
 
-    //private void animationupdate()
-    //{
-    //    movementState state;
-    //    if (dirX > 0f)
-    //    {
-    //        state = movementState.running;
-    //    }
-    //    else if (dirX < 0f)
-    //   {
-    //        state = movementState.running;
-    //        Flip();
-    //    }
-    //    else
-    //    {
-    //        state = movementState.idle;
-    //    }
-    //    if (rb.velocity.y > .1f)
-    //    {
-    //        state = movementState.jump;
-    //    }
-    //    else
-    //    {
-    //        state = movementState.idle;
-    //    }
-    //    anim.SetInteger("state", (int)state);
-    //}
+    private void animationupdate()
+    {
+        movementState state;
+        if (dirX > 0f)
+        {
+            state = movementState.running;
+            if (crouchingPressed)
+            {
+                state = movementState.crouch;
+            }
+            else if(rb.velocity.y < -.9f)
+            {
+                state = movementState.falling;
+            }
+            else if (rb.velocity.y > .1f)
+            {
+                state = movementState.jump;
+            }
+        }
+        else if (dirX < 0f)
+        {
+            state = movementState.running;
+            Flip();
+            if (crouchingPressed)
+            {
+                state = movementState.crouch;
+            }
+            else if (rb.velocity.y < -.9f)
+            {
+                state = movementState.falling;
+            }
+            else if (rb.velocity.y > .1f)
+            {
+                state = movementState.jump;
+            }
+        }
+        else if (crouchingPressed)
+        {
+            state = movementState.crouch;
+            if (rb.velocity.y < -.9f)
+            {
+                state = movementState.falling;
+            }
+            else if (rb.velocity.y > .1f)
+            {
+                state = movementState.jump;
+            }
+        }
+        else if(Input.GetButtonDown("Jump"))
+        {
+            state = movementState.jump;
+        }
+        else
+        {
+            state = movementState.idle;
+            if (rb.velocity.y < -.9f)
+            {
+                state = movementState.falling;
+            }
+            else if (rb.velocity.y > .1f)
+            {
+                state = movementState.jump;
+            }
+        }
+        anim.SetInteger("state", (int)state);
+    }
 
     private void FixedUpdate()
     {
@@ -184,8 +222,6 @@ public class PlayerController : MonoBehaviour
             return;
         }
         rb.velocity = new Vector2(dirX * movementSpeed, rb.velocity.y);
-
-        CallParalax();
     }
 
     private void Flip()
@@ -201,22 +237,8 @@ public class PlayerController : MonoBehaviour
 
     private bool IsGrounded()
     {
+        print("bruh");
         return Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
-    }
-
-    private bool GetJumpingInput()
-    {
-        return Input.GetButtonDown("Jump") || Input.GetKeyDown(KeyCode.W);
-    }
-
-    void CallParalax()
-    {
-        bool? goToRight = null;
-        if (rb.velocity.x < 0) goToRight = true;
-        if (rb.velocity.x > 0) goToRight = false;
-
-        if (isDashing == false) ParalaxManager.DoParalax(goToRight);
-        else StartCoroutine(ParalaxManager.Dashing(goToRight));
     }
 
     private IEnumerator Dash()
@@ -224,12 +246,9 @@ public class PlayerController : MonoBehaviour
         canDash = false;
         isDashing = true;
         rb.velocity = new Vector2(transform.localScale.x * dashingPower, 0f);
-
-        CallParalax();
-
-        //tr.emitting = true;
+        tr.emitting = true;
         yield return new WaitForSeconds(dashingTime);
-        //tr.emitting = false;
+        tr.emitting = false;
         isDashing = false;
         yield return new WaitForSeconds(dashingCooldown);
         canDash = true;
@@ -241,24 +260,18 @@ public class PlayerController : MonoBehaviour
         {
             Destroy(collider.gameObject);
         }
-        if (collider.tag == "Steal" && isDashing)
-        {
-            Destroy(collider.gameObject);
-        }
     }
 
     private void OnTriggerStay2D(Collider2D collision)
     {
         if (collision.tag == "Item" && Input.GetKeyDown(KeyCode.J))
         {
-            OnObjectPicked();
             Destroy(collision.gameObject);
         }
     }
 
     void createParticle()
     {
-        return;
         ps.Play();
     }
-}
+ }

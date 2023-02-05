@@ -5,7 +5,8 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] private PlatformsPerRow[] platformRows;
+    [SerializeField] private PlatformsPerRow[] tutorialRows;
+    [SerializeField] private PlatformsPerRow[] firstLevelRows;
 
 
 }

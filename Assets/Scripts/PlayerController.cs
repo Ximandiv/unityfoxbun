@@ -89,7 +89,7 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-            //animationupdate();
+        animationupdate();
 
         /*
         if (Input.GetButtonUp("Jump") && rb.velocity.y > 0f)

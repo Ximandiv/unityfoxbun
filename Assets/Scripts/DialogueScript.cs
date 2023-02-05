@@ -30,7 +30,7 @@ public class DialogueScript : MonoBehaviour
 
     public void Update()
     {
-        animationupdate();
+        //animationupdate();
         Flip();
     }
 

@@ -333,7 +333,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55fc62a0103d4c54cb43885644c99d2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  message: {fileID: 8868549215096665377}
+  rend: {fileID: 0}
+  place: {fileID: 8868549215096665377}
+  PlayerController: {fileID: 0}
+  rb: {fileID: 3496473187651722001}
+  isFacingRight: 0
 --- !u!1 &5467844121781518255
 GameObject:
   m_ObjectHideFlags: 0

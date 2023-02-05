@@ -50,7 +50,7 @@ public class PlayerController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
-        ps.Stop();
+        //ps.Stop();
         Collider = GetComponent<CapsuleCollider2D>();
         standColliderSize = Collider.size;
         standColliderOffset = Collider.offset;
@@ -243,9 +243,8 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private bool IsGrounded()
+    public bool IsGrounded()
     {
-        print("bruh");
         return Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
     }
 
@@ -280,6 +279,6 @@ public class PlayerController : MonoBehaviour
 
     void createParticle()
     {
-        ps.Play();
+        //ps.Play();
     }
  }

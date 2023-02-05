@@ -11,6 +11,7 @@ public class DialogueScript : MonoBehaviour
     public PlayerController PlayerController;
     public Rigidbody2D rb;
     public bool isFacingRight;
+
     private Animator anim;
 
     private enum movementState
@@ -36,21 +37,24 @@ public class DialogueScript : MonoBehaviour
 
     public void Start()
     {
-        rend = rend.GetComponent<SpriteRenderer>();
-        rb = rb.GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
     }
     private void OnTriggerStay2D(Collider2D collider)
     {
-        if(collider.tag == "Player" && PlayerController.isDashing)
+        if(collider.tag == "Player")
         {
-            rend.enabled = true;
+            if (rend != null) rend.enabled = true;
+            else place.gameObject.SetActive(true);
         }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        rend.enabled = false;
+        if (collision.tag == "Player")
+        {
+            if (rend != null) rend.enabled = false;
+            else place.gameObject.SetActive(false);
+        }
     }
     private void animationupdate()
     {

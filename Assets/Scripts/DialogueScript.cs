@@ -6,24 +6,21 @@ using UnityEngine.UI;
 
 public class DialogueScript : MonoBehaviour
 {
-    public SpriteRenderer rend;
-    public GameObject place;
-    public PlayerController PlayerController;
+    [SerializeField] private GameObject message;
 
-    public void Start()
-    {
-        rend = rend.GetComponent<SpriteRenderer>();
-    }
     private void OnTriggerStay2D(Collider2D collider)
     {
-        if(collider.tag == "Player" && PlayerController.isDashing)
+        if(collider.tag == "Player")
         {
-            rend.enabled = true;
+            message.SetActive(true);
         }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        rend.enabled = false;
+        if (collision.tag == "Player") 
+        {
+            message.SetActive(false);
+        }
     }
 }

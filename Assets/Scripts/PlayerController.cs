@@ -99,17 +99,17 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.LeftShift) && canDash)
         {
-            StartCoroutine(Dash());
+            //StartCoroutine(Dash());
         }
         if (Input.GetKeyDown(KeyCode.C))
         {
             crouchingPressed = true;
-            Crouch();
+            //Crouch();
         }
         if (Input.GetKeyUp(KeyCode.C))
         {
             crouchingPressed = false;
-            StandingUp();
+            //StandingUp();
         }
 
         if (isDashing)
@@ -133,6 +133,7 @@ public class PlayerController : MonoBehaviour
         if (crouchingPressed)
         {
             isCrouching = true;
+            canDash = false;
             Collider.size = crouchColliderSize;
             Collider.offset = crouchColliderOffset;
         }
@@ -143,6 +144,7 @@ public class PlayerController : MonoBehaviour
         if (!crouchingPressed)
         {
             isCrouching = true;
+            canDash = true;
             Collider.size = standColliderSize;
             Collider.offset = standColliderOffset;
         }

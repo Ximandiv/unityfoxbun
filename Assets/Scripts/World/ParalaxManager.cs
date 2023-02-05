@@ -51,10 +51,15 @@ public class ParalaxManager : MonoBehaviour
 
     public static IEnumerator Dashing(bool? goToRight) 
     {
-        //while () 
-        {
+        float counter = 0f;
+        float final = 1f;
 
+        while (counter < final) 
+        {
+            DoParalax(goToRight);
+
+            counter += Time.fixedDeltaTime;
+            yield return null;
         }
-        yield return null;
     }
 }

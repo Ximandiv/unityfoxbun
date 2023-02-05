@@ -37,7 +37,7 @@ public class BunnyMovement : MonoBehaviour
         rigidbody.AddForce(new Vector2(jumpForceX * (goToRight? 1 : -1), jumpForceY), ForceMode2D.Impulse);
     }
 
-    IEnumerator Jumping() 
+    IEnumerator Jumping()
     {
         while(isJumping == true) 
         {

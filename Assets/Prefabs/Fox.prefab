@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1155394684584829024}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: GroundCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -43,7 +43,7 @@ GameObject:
   - component: {fileID: 1155394684742726364}
   - component: {fileID: 1155394684742726365}
   - component: {fileID: 1155394684742726366}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Fox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -106,7 +106,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: df52cb8b9300f1244b5a27c1d4073c36, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.95686275}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -134,10 +134,17 @@ MonoBehaviour:
     m_Bits: 64
   tr: {fileID: 0}
   ps: {fileID: 0}
-  dashingPower: 40
-  movementSpeed: 6
+  Collider: {fileID: 0}
+  isDashing: 0
+  dashing: 0
+  crouchingPressed: 0
+  isFull: 0
+  dashingPower: 20
+  movementSpeed: 3
   jumpingPower: 40
   twoJumpingPower: 40
+  crouchPercentOfHeight: 0.5
+  isCrouching: 0
 --- !u!50 &1155394684742726365
 Rigidbody2D:
   serializedVersion: 4
@@ -168,7 +175,7 @@ CapsuleCollider2D:
   m_GameObject: {fileID: 1155394684742726353}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: dcfab17a9efae2e4cba00928cba68600, type: 2}
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
